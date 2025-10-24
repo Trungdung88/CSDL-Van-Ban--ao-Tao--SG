@@ -284,7 +284,44 @@
                 // *******************************************
 
                 if (!DB.getItem('documents')) DB.setItem('documents', []);
-                if (!DB.getItem('docTypes')) DB.setItem('docTypes', [{id: 'QD', name: 'Quyết định'}, {id: 'TT', name: 'Thông tư'}]);
+                
+                // *** CẬP NHẬT DANH MỤC LOẠI VĂN BẢN TỪ FILE CSV ***
+                const defaultDocTypes = [
+                    {id: 'NQ', name: 'Nghị quyết (cá biệt)'},
+                    {id: 'QĐ', name: 'Quyết định (cá biệt)'},
+                    {id: 'CT', name: 'Chỉ thị'},
+                    {id: 'QC', name: 'Quy chế'},
+                    {id: 'QyĐ', name: 'Quy định'},
+                    {id: 'TC', name: 'Thông cáo'},
+                    {id: 'TB', name: 'Thông báo'},
+                    {id: 'HD', name: 'Hướng dẫn'},
+                    {id: 'CTr', name: 'Chương trình'},
+                    {id: 'KH', name: 'Kế hoạch'},
+                    {id: 'PA', name: 'Phương án'},
+                    {id: 'ĐA', name: 'Đề án'},
+                    {id: 'DA', name: 'Dự án'},
+                    {id: 'BC', name: 'Báo cáo'},
+                    {id: 'BB', name: 'Biên bản'},
+                    {id: 'TTr', name: 'Tờ trình'},
+                    {id: 'HĐ', name: 'Hợp đồng'},
+                    {id: 'CĐ', name: 'Công điện'},
+                    {id: 'BGN', name: 'Bản ghi nhớ'},
+                    {id: 'BTT', name: 'Bản thỏa thuận'},
+                    {id: 'GUQ', name: 'Giấy uỷ quyền'},
+                    {id: 'GM', name: 'Giấy mời'},
+                    {id: 'GGT', name: 'Giấy giới thiệu'},
+                    {id: 'GNP', name: 'Giấy nghỉ phép'},
+                    {id: 'PG', name: 'Phiếu gửi'},
+                    {id: 'PC', name: 'Phiếu chuyển'},
+                    {id: 'PB', name: 'Phiếu báo'},
+                    {id: 'TCG', name: 'Thư công'}, // 'Thư công' không có mã, tạm gán TCG
+                    {id: 'SY', name: 'Bản sao y'},
+                    {id: 'TrS', name: 'Bản trích sao'},
+                    {id: 'SL', name: 'Bản sao lục'}
+                ];
+                if (!DB.getItem('docTypes')) DB.setItem('docTypes', defaultDocTypes);
+                // ****************************************************
+
                 if (!DB.getItem('issuers')) DB.setItem('issuers', [{id: 'BCT', name: 'Bộ Công Thương'}, {id: 'BTC', name: 'Bộ Tài chính'}]);
             }
         };
@@ -833,7 +870,7 @@
                 modalTitle.textContent = `Cập nhật văn bản - ${doc.docNumber}`;
             }
             
-            const docTypesOptions = state.docTypes.map(t => `<option value="${t.id}" ${doc.docTypeId === t.id ? 'selected':''}>${t.name}</option>`).join('');
+            const docTypesOptions = state.docTypes.map(t => `<option value="${t.id}" ${doc.docTypeId === t.id ? 'selected':''}>${t.id} - ${t.name}</option>`).join('');
             const issuersOptions = state.issuers.map(i => `<option value="${i.id}" ${doc.issuerId === i.id ? 'selected':''}>${i.name}</option>`).join('');
             
             modalBody.innerHTML = `
@@ -985,7 +1022,7 @@
 
         const closeModal = () => {
             const modal = $('#form-modal');
-            $('.modal-content').classList.add('scale-95');
+            $('.modal-content', modal).classList.add('scale-95');
             modal.classList.add('opacity-0');
             setTimeout(() => {
                 modal.classList.add('hidden');
@@ -1004,6 +1041,14 @@
                 modal.classList.add('hidden');
                 modal.classList.remove('opacity-0');
                 $('#change-pass-form').reset();
+                // Reset password fields to type="password"
+                $('#old-password').type = 'password';
+                $('#new-password').type = 'password';
+                $('#confirm-password').type = 'password';
+                $$('#change-pass-modal .toggle-password').forEach(icon => {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                });
             }, 300);
         };
 

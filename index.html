@@ -7,6 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
+        /* CSS Variables for Theming */
+        :root {
+            --color-primary-100: #DBEAFE; /* blue-100 */
+            --color-primary-600: #3B82F6; /* blue-600 */
+            --color-primary-700: #2563EB; /* blue-700 */
+            --color-primary-800: #1D4ED8; /* blue-800 */
+        }
+
         /* Custom scrollbar for better UX */
         ::-webkit-scrollbar {
             width: 8px;
@@ -40,8 +48,7 @@
         /* Styles cho các tab đang hoạt động */
         .tab-btn.active {
             border-bottom-width: 2px;
-            border-color: #2563EB; /* blue-600 */
-            color: #2563EB;
+            /* Applied via JS */
             font-weight: 600;
         }
         /* Toggle password icon */
@@ -56,6 +63,10 @@
         .toggle-password:hover {
             color: #6B7280; /* gray-500 */
         }
+        /* Theme button visual */
+        .theme-btn.active {
+            box-shadow: 0 0 0 3px white, 0 0 0 5px var(--color-primary-600);
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -64,7 +75,7 @@
     <div id="login-screen" class="flex items-center justify-center h-screen bg-gray-200">
         <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-xl">
             <div class="text-center mb-8">
-                <i class="fas fa-folder-open text-4xl text-blue-600"></i>
+                <i class="fas fa-folder-open text-4xl text-[var(--color-primary-600)]"></i>
                 <h1 class="text-2xl font-bold mt-3 text-gray-700">Quản Lý Văn Bản</h1>
                 <p class="text-gray-500">Đăng nhập để tiếp tục</p>
             </div>
@@ -79,7 +90,7 @@
                     <i id="toggle-login-pass" class="fas fa-eye toggle-password"></i>
                 </div>
                 <p id="login-error" class="text-red-500 text-sm text-center mb-4"></p>
-                <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 font-semibold">Đăng nhập</button>
+                <button type="submit" class="w-full bg-[var(--color-primary-600)] text-white p-3 rounded-lg hover:bg-[var(--color-primary-700)] font-semibold">Đăng nhập</button>
             </form>
         </div>
     </div>
@@ -91,11 +102,11 @@
         <!-- Sidebar -->
         <aside class="w-64 bg-white shadow-lg flex-shrink-0 flex flex-col">
             <div class="h-16 flex items-center justify-center border-b">
-                <i class="fas fa-folder-open text-2xl text-blue-600"></i>
-                <h1 class="text-xl font-bold ml-3 text-gray-700">QUẢN-LÝ-VĂN-BẢN</h1>
+                <i class="fas fa-folder-open text-2xl text-[var(--color-primary-600)]"></i>
+                <h1 class="text-xl font-bold ml-3 text-gray-700">Quản Lý Văn Bản</h1>
             </div>
             <nav id="main-nav" class="flex-grow p-4 space-y-2">
-                <a href="#" data-view="dashboard" class="nav-link flex items-center px-4 py-2 text-gray-700 bg-blue-100 rounded-lg">
+                <a href="#" data-view="dashboard" class="nav-link flex items-center px-4 py-2 text-gray-700 bg-[var(--color-primary-100)] rounded-lg">
                     <i class="fas fa-tachometer-alt w-6 text-center"></i><span class="ml-3">Bảng điều khiển</span>
                 </a>
                 <a href="#" data-view="incoming" class="nav-link flex items-center px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg">
@@ -121,7 +132,7 @@
                         <p id="user-name-display" class="font-semibold text-sm">...</p>
                         <p id="user-unit-display" class="text-xs text-gray-500">...</p>
                     </div>
-                    <button id="change-pass-btn" title="Đổi mật khẩu" class="text-gray-500 hover:text-blue-600 ml-2">
+                    <button id="change-pass-btn" title="Đổi mật khẩu" class="text-gray-500 hover:text-[var(--color-primary-600)] ml-2">
                         <i class="fas fa-lock text-lg"></i>
                     </button>
                     <button id="logout-btn" title="Đăng xuất" class="text-gray-500 hover:text-red-600 ml-2">
@@ -135,7 +146,7 @@
         <main class="flex-1 flex flex-col overflow-hidden">
             <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6">
                  <h2 id="view-title" class="text-2xl font-semibold text-gray-800">Bảng điều khiển</h2>
-                 <button id="add-new-btn" class="hidden bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow flex items-center">
+                 <button id="add-new-btn" class="hidden bg-[var(--color-primary-600)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-primary-700)] shadow flex items-center">
                       <i class="fas fa-plus mr-2"></i>Thêm mới
                  </button>
             </header>
@@ -159,7 +170,9 @@
              </div>
              <div class="p-6 bg-gray-50 border-t flex justify-end space-x-3">
                   <button id="cancel-modal-btn" class="px-5 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300">Hủy bỏ</button>
-                  <button id="save-modal-btn" class="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Lưu lại</button>
+                  <button id="save-draft-btn" class="px-5 py-2 rounded-lg bg-gray-600 text-white hover:bg-gray-700 hidden">Lưu nháp</button>
+                  <button id="save-modal-btn" class="px-5 py-2 rounded-lg bg-[var(--color-primary-600)] text-white hover:bg-[var(--color-primary-700)]">Lưu lại</button>
+                  <button id="send-save-btn" class="px-5 py-2 rounded-lg bg-[var(--color-primary-600)] text-white hover:bg-[var(--color-primary-700)] hidden">Gửi và Lưu</button>
              </div>
         </div>
     </div>
@@ -194,7 +207,7 @@
              </div>
              <div class="p-6 bg-gray-50 border-t flex justify-end space-x-3">
                   <button id="cancel-change-pass-btn" class="px-5 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300">Hủy bỏ</button>
-                  <button id="save-change-pass-btn" class="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Lưu lại</button>
+                  <button id="save-change-pass-btn" class="px-5 py-2 rounded-lg bg-[var(--color-primary-600)] text-white hover:bg-[var(--color-primary-700)]">Lưu lại</button>
              </div>
         </div>
     </div>
@@ -322,7 +335,16 @@
                 if (!DB.getItem('docTypes')) DB.setItem('docTypes', defaultDocTypes);
                 // ****************************************************
 
-                if (!DB.getItem('issuers')) DB.setItem('issuers', [{id: 'BCT', name: 'Bộ Công Thương'}, {id: 'BTC', name: 'Bộ Tài chính'}]);
+                // *** CẬP NHẬT DANH MỤC NƠI BAN HÀNH ***
+                const defaultIssuers = [
+                    {id: 'PTTC', name: 'Phụ trách trung cấp'},
+                    {id: 'PTTS', name: 'Phụ trách tuyển sinh'},
+                    {id: 'PTSCDTTX', name: 'Phụ trách sơ cấp & ĐTTX'},
+                    {id: 'TP', name: 'Trưởng phòng'},
+                    {id: 'PHT', name: 'Phó Hiệu trưởng'}
+                ];
+                if (!DB.getItem('issuers')) DB.setItem('issuers', defaultIssuers);
+                // ****************************************
             }
         };
 
@@ -367,6 +389,27 @@
                 iconElement.classList.add('fa-eye');
             }
         };
+        
+        // *** HÀM TIỆN ÍCH MỚI: SET THEME ***
+        const themes = {
+            blue: { 100: '#DBEAFE', 600: '#3B82F6', 700: '#2563EB', 800: '#1D4ED8' },
+            green: { 100: '#DCFCE7', 600: '#22C55E', 700: '#16A34A', 800: '#15803D' },
+            purple: { 100: '#F5F3FF', 600: '#8B5CF6', 700: '#7C3AED', 800: '#6D28D9' },
+            orange: { 100: '#FFF7ED', 600: '#F97316', 700: '#EA580C', 800: '#C2410C' },
+        };
+        const setTheme = (themeName) => {
+            const theme = themes[themeName] || themes.blue;
+            document.documentElement.style.setProperty('--color-primary-100', theme[100]);
+            document.documentElement.style.setProperty('--color-primary-600', theme[600]);
+            document.documentElement.style.setProperty('--color-primary-700', theme[700]);
+            document.documentElement.style.setProperty('--color-primary-800', theme[800]);
+            DB.setItem('theme', themeName);
+            // Cập nhật style cho tab active
+            $$('.tab-btn.active').forEach(tab => {
+                tab.style.borderColor = theme[600];
+                tab.style.color = theme[600];
+            });
+        };
 
 
         // --- TEMPLATES & RENDERING ---
@@ -376,9 +419,9 @@
             $('#view-title').textContent = $$(`.nav-link[data-view="${state.currentView}"] span`)[0].textContent;
             
             const addNewBtn = $('#add-new-btn');
-            // Chỉ cho phép Chuyên viên, TP, PHT, Admin thêm mới
             const canAdd = ['specialist', 'manager', 'vp', 'admin'].includes(state.currentUser.role);
-            if (['incoming', 'outgoing', 'personal'].includes(state.currentView) && canAdd) {
+            // *** Bỏ "Thêm mới" cho Văn bản đến ***
+            if (['outgoing', 'personal'].includes(state.currentView) && canAdd) {
                 addNewBtn.classList.remove('hidden');
             } else {
                 addNewBtn.classList.add('hidden');
@@ -398,8 +441,17 @@
                     $$('.tab-btn').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const tabId = btn.dataset.tab;
-                            $$('.tab-btn').forEach(t => t.classList.remove('active'));
+                            // Cập nhật theme cho tab
+                            const themeColor = themes[DB.getItem('theme') || 'blue'][600];
+                            $$('.tab-btn').forEach(t => {
+                                t.classList.remove('active');
+                                t.style.borderColor = 'transparent';
+                                t.style.color = '#4B5563'; // gray-600
+                            });
                             btn.classList.add('active');
+                            btn.style.borderColor = themeColor;
+                            btn.style.color = themeColor;
+                            
                             $$('.tab-content').forEach(c => c.classList.add('hidden'));
                             if($(`#tab-content-${tabId}`)) {
                                 $(`#tab-content-${tabId}`).classList.remove('hidden');
@@ -407,6 +459,13 @@
                             attachDynamicEventListeners(); // Gắn lại listener cho các nút trong tab mới
                         });
                     });
+                    // Áp dụng theme cho tab active đầu tiên
+                    const activeTab = $('.tab-btn.active');
+                    if (activeTab) {
+                         const themeColor = themes[DB.getItem('theme') || 'blue'][600];
+                         activeTab.style.borderColor = themeColor;
+                         activeTab.style.color = themeColor;
+                    }
                     break;
                 case 'search':
                     content.innerHTML = renderSearch();
@@ -431,7 +490,7 @@
             return `
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
-                        <div class="bg-blue-100 p-4 rounded-full"><i class="fas fa-arrow-down text-blue-600 text-2xl"></i></div>
+                        <div class="bg-[var(--color-primary-100)] p-4 rounded-full"><i class="fas fa-arrow-down text-[var(--color-primary-600)] text-2xl"></i></div>
                         <div class="ml-4">
                             <p class="text-gray-500">Văn bản đến</p>
                             <p class="text-2xl font-bold">${incomingCount}</p>
@@ -470,7 +529,7 @@
         
         const getCategoryName = (category) => {
             switch(category) {
-                case 'incoming': return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đến</span>';
+                case 'incoming': return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-[var(--color-primary-100)] text-[var(--color-primary-800)]">Đến</span>';
                 case 'outgoing': return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Đi</span>';
                 case 'personal': return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Cá nhân</span>';
                 default: return '';
@@ -487,7 +546,7 @@
                 if (userRole === 'specialist' && (doc.status === 'draft' || doc.status === 'rejected') && doc.ownerId === state.currentUser.id) {
                     return `
                         ${doc.status === 'rejected' ? '<span class="text-xs text-red-500 mr-2">Bị trả lại</span>' : ''}
-                        <button data-id="${doc.id}" class="edit-btn text-blue-600 hover:text-blue-800 p-1" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
+                        <button data-id="${doc.id}" class="edit-btn text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] p-1" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
                         <button data-id="${doc.id}" class="delete-btn text-red-600 hover:text-red-800 p-1 ml-2" title="Xóa"><i class="fas fa-trash-alt"></i></button>
                         <button data-id="${doc.id}" class="submit-btn text-green-600 hover:text-green-800 p-1 ml-2" title="Trình Trưởng phòng"><i class="fas fa-paper-plane"></i></button>
                     `;
@@ -496,7 +555,8 @@
                 // 2. Trưởng phòng (manager)
                 if (userRole === 'manager' && doc.status === 'pending_manager' && doc.ownerId === state.currentUser.id) {
                     return `
-                        <button data-id="${doc.id}" class="manager-approve-btn text-green-600 hover:text-green-800 p-1" title="Duyệt & Trình PHT"><i class="fas fa-check-double"></i></button>
+                        <button data-id="${doc.id}" class="edit-btn text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] p-1" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
+                        <button data-id="${doc.id}" class="manager-approve-btn text-green-600 hover:text-green-800 p-1 ml-2" title="Duyệt & Trình PHT"><i class="fas fa-check-double"></i></button>
                         <button data-id="${doc.id}" class="reject-btn text-red-600 hover:text-red-800 p-1 ml-2" title="Trả lại"><i class="fas fa-undo-alt"></i></button>
                     `;
                 }
@@ -504,7 +564,8 @@
                 // 3. Phó Hiệu trưởng (vp)
                 if (userRole === 'vp' && doc.status === 'pending_vp' && doc.ownerId === state.currentUser.id) {
                     return `
-                        <button data-id="${doc.id}" class="vp-approve-btn text-green-600 hover:text-green-800 p-1" title="Phê duyệt"><i class="fas fa-check-circle"></i></button>
+                        <button data-id="${doc.id}" class="edit-btn text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] p-1" title="Sửa"><i class="fas fa-pencil-alt"></i></button>
+                        <button data-id="${doc.id}" class="vp-approve-btn text-green-600 hover:text-green-800 p-1 ml-2" title="Phê duyệt"><i class="fas fa-check-circle"></i></button>
                         <button data-id="${doc.id}" class="reject-btn text-red-600 hover:text-red-800 p-1 ml-2" title="Trả lại"><i class="fas fa-undo-alt"></i></button>
                     `;
                 }
@@ -521,7 +582,7 @@
             // Logic cũ cho các văn bản khác (nếu có quyền)
             if (canModify) {
                 return `
-                    <button data-id="${doc.id}" class="edit-btn text-blue-600 hover:text-blue-800 p-1"><i class="fas fa-pencil-alt"></i></button>
+                    <button data-id="${doc.id}" class="edit-btn text-[var(--color-primary-600)] hover:text-[var(--color-primary-800)] p-1"><i class="fas fa-pencil-alt"></i></button>
                     <button data-id="${doc.id}" class="delete-btn text-red-600 hover:text-red-800 p-1 ml-2"><i class="fas fa-trash-alt"></i></button>
                 `;
             }
@@ -553,7 +614,10 @@
                              const creator = state.users.find(u => u.id === doc.createdBy);
                              return `
                                  <tr class="hover:bg-gray-50">
-                                     <td class="p-3 font-medium">${doc.docNumber}</td>
+                                     <td class="p-3 font-medium">
+                                        ${doc.attachmentName ? `<i class="fas fa-paperclip text-gray-400 mr-1" title="Đã đính kèm: ${doc.attachmentName}"></i>` : ''}
+                                        ${doc.docNumber}
+                                     </td>
                                      <td class="p-3 text-gray-600 max-w-sm truncate">${doc.summary}</td>
                                      <td class="p-3">${getCategoryName(doc.category)}</td>
                                      <td class="p-3 text-gray-600">${formatDate(doc.issueDate)}</td>
@@ -622,7 +686,7 @@
             
             else if (userRole === 'manager') {
                 tabsHtml = `
-                    <button data-tab="pending_manager" class="tab-btn active px-4 py-2">Chờ duyệt (từ NV)</button>
+                    <button data-tab="pending_manager" class="tab-btn active px-4 py-2">Chờ duyệt (từ CV)</button>
                     <button data-tab="pending_vp" class="tab-btn px-4 py-2 text-gray-600">Đang chờ PHT duyệt</button>
                     <button data-tab="approved" class="tab-btn px-4 py-2 text-gray-600">Đã phê duyệt</button>
                 `;
@@ -647,7 +711,7 @@
             
             else if (userRole === 'vp') {
                 tabsHtml = `
-                    <button data-tab="pending_vp" class="tab-btn active px-4 py-2">Chờ phê duyệt</button>
+                    <button data-tab="pending_vp" class="tab-btn active px-4 py-2">Chờ duyệt (từ Trưởng phòng)</button>
                 `;
                 
                 const pendingVP = allOutgoingDocs.filter(d => d.status === 'pending_vp' && d.ownerId === state.currentUser.id);
@@ -685,7 +749,7 @@
                         <input id="search-end-date" type="date" class="p-2 border rounded-lg w-full">
                     </div>
                      <div class="flex justify-center">
-                         <button id="search-btn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow flex items-center">
+                         <button id="search-btn" class="bg-[var(--color-primary-600)] text-white px-6 py-2 rounded-lg hover:bg-[var(--color-primary-700)] shadow flex items-center">
                               <i class="fas fa-search mr-2"></i>Tìm kiếm
                          </button>
                     </div>
@@ -744,9 +808,20 @@
                                      <label class="block text-sm font-medium">ID Phó Hiệu trưởng (Nếu là TP)</label>
                                      <input type="email" name="vpId" class="mt-1 p-2 border rounded-lg w-full" placeholder="VD: thvan">
                                  </div>
-                                 <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">Tạo người dùng</button>
+                                 <button type="submit" class="w-full bg-[var(--color-primary-600)] text-white p-2 rounded-lg hover:bg-[var(--color-primary-700)]">Tạo người dùng</button>
                              </form>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Theme Settings -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-semibold mb-4 border-b pb-2">Chọn giao diện</h3>
+                    <div class="flex space-x-4">
+                        <button data-theme="blue" class="theme-btn w-12 h-12 bg-blue-600 rounded-full border-4 border-white shadow" title="Xanh dương (Mặc định)"></button>
+                        <button data-theme="green" class="theme-btn w-12 h-12 bg-green-600 rounded-full border-4 border-white shadow" title="Xanh lá"></button>
+                        <button data-theme="purple" class="theme-btn w-12 h-12 bg-purple-600 rounded-full border-4 border-white shadow" title="Tím"></button>
+                        <button data-theme="orange" class="theme-btn w-12 h-12 bg-orange-600 rounded-full border-4 border-white shadow" title="Cam"></button>
                     </div>
                 </div>
 
@@ -757,7 +832,7 @@
                     <form id="add-doc-type-form" class="flex gap-2">
                         <input type="text" name="id" placeholder="Mã loại (VD: QD)" class="p-2 border rounded-lg w-1/3" required>
                         <input type="text" name="name" placeholder="Tên loại (VD: Quyết định)" class="p-2 border rounded-lg flex-1" required>
-                        <button type="submit" class="bg-blue-600 text-white px-3 rounded-lg hover:bg-blue-700"><i class="fas fa-plus"></i></button>
+                        <button type="submit" class="bg-[var(--color-primary-600)] text-white px-3 rounded-lg hover:bg-[var(--color-primary-700)]"><i class="fas fa-plus"></i></button>
                     </form>
                 </div>
                 
@@ -768,7 +843,7 @@
                     <form id="add-issuer-form" class="flex gap-2">
                         <input type="text" name="id" placeholder="Mã nơi (VD: BTC)" class="p-2 border rounded-lg w-1/3" required>
                         <input type="text" name="name" placeholder="Tên nơi (VD: Bộ Tài chính)" class="p-2 border rounded-lg flex-1" required>
-                        <button type="submit" class="bg-blue-600 text-white px-3 rounded-lg hover:bg-blue-700"><i class="fas fa-plus"></i></button>
+                        <button type="submit" class="bg-[var(--color-primary-600)] text-white px-3 rounded-lg hover:bg-[var(--color-primary-700)]"><i class="fas fa-plus"></i></button>
                     </form>
                 </div>
 
@@ -917,8 +992,45 @@
                         <label class="block text-sm font-medium">Nội dung chi tiết / Ghi chú</label>
                         <textarea name="content" rows="4" class="mt-1 p-2 border rounded-lg w-full">${doc.content || ''}</textarea>
                     </div>
+
+                    <!-- *** MỚI: Đính kèm tệp *** -->
+                    ${(category === 'outgoing' || category === 'personal') ? `
+                    <div>
+                        <label class="block text-sm font-medium">Đính kèm tệp</label>
+                        ${doc.attachmentName ? `<p class="text-sm text-gray-600 mt-1" id="attachment-name">Tệp hiện tại: ${doc.attachmentName} <button type"button" id="remove-attachment" class="text-red-500 ml-2 font-bold" title="Xóa tệp">&times;</button></p>` : ''}
+                        <input type="file" name="attachment" class="mt-1 p-2 text-sm border rounded-lg w-full">
+                        <p class="text-xs text-gray-500 mt-1">Lưu ý: Hệ thống chỉ lưu tên tệp, không lưu tệp thật.</p>
+                        <input type="hidden" name="attachmentName" value="${doc.attachmentName || ''}">
+                    </div>` : ''}
                 </form>
             `;
+
+            // *** MỚI: Hiển thị các nút Lưu / Gửi động ***
+            const saveBtn = $('#save-modal-btn');
+            const saveDraftBtn = $('#save-draft-btn');
+            const sendSaveBtn = $('#send-save-btn');
+
+            if (category === 'outgoing' && (isNew || doc.status === 'draft' || doc.status === 'rejected')) {
+                saveBtn.classList.add('hidden'); // Ẩn nút "Lưu lại" mặc định
+                saveDraftBtn.classList.remove('hidden'); // Hiện "Lưu nháp"
+                sendSaveBtn.classList.remove('hidden'); // Hiện "Gửi và Lưu"
+            } else {
+                saveBtn.classList.remove('hidden'); // Hiện "Lưu lại"
+                saveDraftBtn.classList.add('hidden');
+                sendSaveBtn.classList.add('hidden');
+            }
+            
+            // Thêm listener cho nút xóa tệp đính kèm
+            if ($('#remove-attachment')) {
+                $('#remove-attachment').addEventListener('click', () => {
+                    $('input[name="attachmentName"]').value = ''; // Xóa tên tệp khỏi hidden input
+                    $('#attachment-name').remove(); // Xóa dòng text
+                    $('input[name="attachment"]').value = null; // Xóa tệp đã chọn (nếu có)
+                    showToast('Đã xóa đính kèm (hãy nhấn lưu để xác nhận).');
+                });
+            }
+
+            // Mở modal
             $('#form-modal').classList.remove('hidden');
             $('#form-modal').classList.add('flex');
             setTimeout(() => {
@@ -936,17 +1048,18 @@
             }
             state.currentView = view;
             $$('.nav-link').forEach(link => {
-                link.classList.remove('bg-blue-100', 'font-semibold');
+                link.classList.remove('bg-[var(--color-primary-100)]', 'font-semibold');
                 link.classList.add('text-gray-600', 'hover:bg-gray-200');
                 if (link.dataset.view === view) {
-                    link.classList.add('bg-blue-100', 'font-semibold');
+                    link.classList.add('bg-[var(--color-primary-100)]', 'font-semibold');
                     link.classList.remove('text-gray-600', 'hover:bg-gray-200');
                 }
             });
             renderContent();
         };
 
-        const handleFormSubmit = () => {
+        // *** CẬP NHẬT: Xử lý các hành động lưu (Lưu, Lưu nháp, Gửi) ***
+        const handleFormSubmit = (action = 'save') => {
             const form = $('#document-form');
             if (!form.checkValidity()) {
                 form.reportValidity();
@@ -955,46 +1068,109 @@
 
             const formData = new FormData(form);
             const doc = Object.fromEntries(formData.entries());
+
+            // Xóa trường file rỗng
+            delete doc.attachment; 
+
+            // Xử lý đính kèm tệp
+            const fileInput = form.querySelector('input[type="file"]');
+            if (fileInput && fileInput.files.length > 0) {
+                doc.attachmentName = fileInput.files[0].name;
+            } else {
+                // Giữ tên tệp hiện có (nếu không chọn tệp mới)
+                doc.attachmentName = form.querySelector('input[name="attachmentName"]').value || '';
+            }
             
             if (state.editingDocId) {
                 const index = state.documents.findIndex(d => d.id === state.editingDocId);
                 // Giữ lại các trường hệ thống
                 doc.createdBy = state.documents[index].createdBy;
                 doc.history = state.documents[index].history || [];
-                // Nếu sửa văn bản bị trả lại, reset status về draft
-                if (doc.category === 'outgoing' && state.documents[index].status === 'rejected') {
-                    doc.status = 'draft';
-                    doc.ownerId = state.currentUser.id;
-                    doc.history.push({
-                        userId: state.currentUser.id,
-                        action: 'edited_after_rejection',
-                        timestamp: new Date().toISOString()
-                    });
+                
+                // IF SPECIALIST IS EDITING DRAFT/REJECTED
+                if (doc.category === 'outgoing' && (doc.status === 'draft' || doc.status === 'rejected')) {
+                    if (action === 'save_submit') {
+                        doc.status = 'pending_manager';
+                        doc.ownerId = state.currentUser.managerId;
+                         if (!doc.ownerId) {
+                            showToast('Tài khoản của bạn chưa được cấu hình người quản lý! Sẽ lưu thành bản nháp.', true);
+                            doc.status = 'draft';
+                            doc.ownerId = state.currentUser.id;
+                        } else {
+                            doc.history.push({
+                                userId: state.currentUser.id,
+                                action: 'submitted_to_manager',
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                    } else { // save_draft
+                        doc.status = 'draft'; // Quay lại trạng thái nháp
+                        doc.ownerId = state.currentUser.id;
+                    }
+                } 
+                // IF MANAGER IS EDITING PENDING_MANAGER (action is 'save')
+                else if (doc.category === 'outgoing' && doc.status === 'pending_manager' && action === 'save') {
+                     // Don't change status or owner, just save.
+                     // The 'doc' object has the data.
+                     showToast('Đã cập nhật văn bản. Văn bản vẫn đang chờ bạn duyệt.', false);
+                }
+                // IF VP IS EDITING PENDING_VP (action is 'save')
+                else if (doc.category === 'outgoing' && doc.status === 'pending_vp' && action === 'save') {
+                     // Don't change status or owner, just save.
+                     showToast('Đã cập nhật văn bản. Văn bản vẫn đang chờ bạn phê duyệt.', false);
                 }
                 
                 state.documents[index] = { ...state.documents[index], ...doc };
-                showToast('Cập nhật văn bản thành công!');
-            } else {
+                
+            } else { // Văn bản mới
                 doc.id = generateId();
                 doc.createdBy = state.currentUser.id; // Set creator
 
-                // *** THÊM TRƯỜNG MẶC ĐỊNH CHO VĂN BẢN ĐI ***
                 if (doc.category === 'outgoing') {
-                    doc.status = 'draft'; // Mặc định là bản nháp
-                    doc.ownerId = state.currentUser.id; // Chính người tạo đang giữ
                     doc.history = [{
                         userId: state.currentUser.id,
                         action: 'created',
                         timestamp: new Date().toISOString()
                     }];
+
+                    if (action === 'save_submit') {
+                        doc.status = 'pending_manager';
+                        doc.ownerId = state.currentUser.managerId;
+                        if (!doc.ownerId) {
+                            showToast('Tài khoản của bạn chưa được cấu hình người quản lý! Sẽ lưu thành bản nháp.', true);
+                            doc.status = 'draft';
+                            doc.ownerId = state.currentUser.id;
+                        } else {
+                            doc.history.push({
+                                userId: state.currentUser.id,
+                                action: 'submitted_to_manager',
+                                timestamp: new Date().toISOString()
+                            });
+                        }
+                    } else { // save_draft
+                        doc.status = 'draft';
+                        doc.ownerId = state.currentUser.id;
+                    }
                 }
-                // *******************************************
                 
                 state.documents.push(doc);
-                showToast('Thêm mới văn bản thành công!');
             }
 
             DB.setItem('documents', state.documents);
+            
+            // Thông báo
+            if (action === 'save_submit') {
+                showToast('Đã gửi và lưu văn bản!');
+            } else if (action === 'save_draft') {
+                showToast('Đã lưu nháp văn bản!');
+            } else if (action === 'save' && 
+                       !(doc.category === 'outgoing' && state.currentUser.role === 'manager' && doc.status === 'pending_manager') &&
+                       !(doc.category === 'outgoing' && state.currentUser.role === 'vp' && doc.status === 'pending_vp')
+            ) { 
+                // Don't show default toast if manager-edit toast was shown
+                showToast(state.editingDocId ? 'Cập nhật văn bản thành công!' : 'Thêm mới văn bản thành công!');
+            }
+            
             closeModal();
             renderContent();
         };
@@ -1032,7 +1208,6 @@
             }, 300);
         };
 
-        // *** HÀM MỚI: ĐÓNG MODAL ĐỔI MẬT KHẨU ***
         const closeChangePassModal = () => {
             const modal = $('#change-pass-modal');
             $('.modal-content', modal).classList.add('scale-95');
@@ -1154,7 +1329,8 @@
                 users: state.users, // Sao lưu cả người dùng
                 documents: state.documents,
                 docTypes: state.docTypes,
-                issuers: state.issuers
+                issuers: state.issuers,
+                theme: DB.getItem('theme') || 'blue' // Sao lưu theme
             });
             const dataBlob = new Blob([dataStr], {type: 'application/json'});
             const url = URL.createObjectURL(dataBlob);
@@ -1181,11 +1357,13 @@
                             DB.setItem('documents', data.documents);
                             DB.setItem('docTypes', data.docTypes);
                             DB.setItem('issuers', data.issuers);
+                            DB.setItem('theme', data.theme || 'blue');
                             
                             state.users = data.users;
                             state.documents = data.documents;
                             state.docTypes = data.docTypes;
                             state.issuers = data.issuers;
+                            setTheme(data.theme || 'blue'); // Áp dụng theme
                             
                             showToast('Phục hồi dữ liệu thành công!');
                             navigate('dashboard');
@@ -1246,6 +1424,21 @@
                     });
                 });
                 
+                // Listeners cho nút Theme
+                $$('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const themeName = btn.dataset.theme;
+                        setTheme(themeName);
+                        $$('.theme-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                });
+                // Đặt highlight cho theme đang active
+                const currentTheme = DB.getItem('theme') || 'blue';
+                const activeBtn = $(`.theme-btn[data-theme="${currentTheme}"]`);
+                if(activeBtn) activeBtn.classList.add('active');
+
+
                 renderCategoryList('#doc-types-list', state.docTypes, (id) => deleteCategory('docType', id));
                 renderCategoryList('#issuers-list', state.issuers, (id) => deleteCategory('issuer', id));
                 
@@ -1315,25 +1508,42 @@
             const docIndex = state.documents.findIndex(d => d.id === docId);
             if (docIndex === -1) return;
             
-            // Tìm Trưởng phòng đã trình văn bản này (dựa vào history)
-            const managerEntry = state.documents[docIndex].history.find(h => h.action === 'approved_by_manager');
-            if (!managerEntry) {
-                showToast('Lỗi: Không tìm thấy Trưởng phòng đã trình!', true);
-                return;
-            }
-            
-            if (confirm('Bạn có chắc muốn phê duyệt văn bản này?')) {
-                state.documents[docIndex].status = 'approved';
-                // Yêu cầu: "chuyển về Trưởng phòng"
-                state.documents[docIndex].ownerId = managerEntry.userId; 
-                state.documents[docIndex].history.push({
+            if (confirm('Bạn có chắc muốn phê duyệt văn bản này?\nVăn bản sẽ được hoàn tất và gửi tới "Văn bản đến".')) {
+                const originalDoc = state.documents[docIndex];
+
+                // 1. Tạo một văn bản "Đến" mới
+                const newIncomingDoc = {
+                    id: generateId(),
+                    category: 'incoming',
+                    docNumber: originalDoc.docNumber,
+                    docTypeId: originalDoc.docTypeId,
+                    issueDate: originalDoc.issueDate,
+                    receivedSentDate: new Date().toISOString().split('T')[0], // Ngày nhận là hôm nay
+                    issuerId: originalDoc.issuerId,
+                    signer: originalDoc.signer,
+                    summary: originalDoc.summary,
+                    content: originalDoc.content,
+                    attachmentName: originalDoc.attachmentName || '',
+                    createdBy: originalDoc.createdBy, // Giữ người tạo gốc
+                    approvedBy: state.currentUser.id, // Ai đã duyệt (PHT)
+                    originalDocId: docId // Liên kết về văn bản đi gốc
+                };
+
+                // 2. Thêm văn bản "Đến" mới vào danh sách
+                state.documents.push(newIncomingDoc);
+                
+                // 3. Cập nhật văn bản "Đi" gốc
+                originalDoc.status = 'approved'; // Đánh dấu là đã duyệt
+                originalDoc.ownerId = null; // Xóa khỏi hàng đợi
+                originalDoc.history.push({
                     userId: state.currentUser.id,
-                    action: 'approved_by_vp',
+                    action: 'approved_by_vp_and_forwarded_to_incoming',
                     timestamp: new Date().toISOString()
                 });
                 
+                // 4. Lưu lại database và làm mới giao diện
                 DB.setItem('documents', state.documents);
-                showToast('Đã phê duyệt văn bản!');
+                showToast('Đã phê duyệt và gửi tới "Văn bản đến"!');
                 renderContent();
             }
         };
@@ -1435,6 +1645,10 @@
         };
         
         const initializeApp = () => {
+            // *** MỚI: Áp dụng theme trước khi làm bất cứ điều gì ***
+            const savedTheme = DB.getItem('theme') || 'blue';
+            setTheme(savedTheme);
+
             state.currentUser = DB.getSessionItem('currentUser');
             if (state.currentUser) {
                 $('#login-screen').style.display = 'none';
@@ -1468,7 +1682,12 @@
                 $('#add-new-btn').addEventListener('click', () => renderForm());
                 $('#close-modal-btn').addEventListener('click', closeModal);
                 $('#cancel-modal-btn').addEventListener('click', closeModal);
-                $('#save-modal-btn').addEventListener('click', handleFormSubmit);
+                
+                // *** MỚI: Listeners cho các nút lưu/gửi ***
+                $('#save-modal-btn').addEventListener('click', () => handleFormSubmit('save'));
+                $('#save-draft-btn').addEventListener('click', () => handleFormSubmit('save_draft'));
+                $('#send-save-btn').addEventListener('click', () => handleFormSubmit('save_submit'));
+
                 window.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && !$('#form-modal').classList.contains('hidden')) closeModal();
                     if (e.key === 'Escape' && !$('#change-pass-modal').classList.contains('hidden')) closeChangePassModal();
@@ -1491,5 +1710,7 @@
     </script>
 </body>
 </html>
+
+
 
 

@@ -44,6 +44,18 @@
             color: #2563EB;
             font-weight: 600;
         }
+        /* Toggle password icon */
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #9CA3AF; /* gray-400 */
+        }
+        .toggle-password:hover {
+            color: #6B7280; /* gray-500 */
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -61,9 +73,10 @@
                     <label for="username" class="block text-sm font-medium mb-1">Tên đăng nhập</label>
                     <input type="text" id="username" class="w-full p-3 border rounded-lg" placeholder="Nhập tên đăng nhập (ID) hoặc email (Admin)" required>
                 </div>
-                <div class="mb-6">
+                <div class="mb-6 relative">
                     <label for="password" class="block text-sm font-medium mb-1">Mật khẩu</label>
-                    <input type="password" id="password" class="w-full p-3 border rounded-lg" placeholder="Nhập mật khẩu" required>
+                    <input type="password" id="password" class="w-full p-3 border rounded-lg pr-10" placeholder="Nhập mật khẩu" required>
+                    <i id="toggle-login-pass" class="fas fa-eye toggle-password"></i>
                 </div>
                 <p id="login-error" class="text-red-500 text-sm text-center mb-4"></p>
                 <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 font-semibold">Đăng nhập</button>
@@ -132,7 +145,7 @@
         </main>
     </div>
 
-    <!-- Modal for Forms -->
+    <!-- Modal for Forms (Thêm/Sửa văn bản) -->
     <div id="form-modal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
         <div class="modal-content bg-white rounded-lg shadow-2xl w-full max-w-3xl transform scale-95">
              <div class="p-6 border-b flex justify-between items-center">
@@ -151,6 +164,41 @@
         </div>
     </div>
     
+    <!-- Modal for Change Password -->
+    <div id="change-pass-modal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="modal-content bg-white rounded-lg shadow-2xl w-full max-w-md transform scale-95">
+             <div class="p-6 border-b flex justify-between items-center">
+                 <h3 class="text-xl font-semibold">Đổi mật khẩu</h3>
+                 <button id="close-change-pass-btn" class="text-gray-500 hover:text-gray-800">
+                     <i class="fas fa-times text-2xl"></i>
+                 </button>
+             </div>
+             <div class="p-6">
+                 <form id="change-pass-form" class="space-y-4">
+                     <div class="relative">
+                         <label class="block text-sm font-medium">Mật khẩu cũ *</label>
+                         <input type="password" id="old-password" class="mt-1 p-2 border rounded-lg w-full pr-10" required>
+                         <i id="toggle-old-pass" class="fas fa-eye toggle-password" style="top: 1.8rem;"></i>
+                     </div>
+                      <div class="relative">
+                         <label class="block text-sm font-medium">Mật khẩu mới *</label>
+                         <input type="password" id="new-password" class="mt-1 p-2 border rounded-lg w-full pr-10" required>
+                         <i id="toggle-new-pass" class="fas fa-eye toggle-password" style="top: 1.8rem;"></i>
+                     </div>
+                      <div class="relative">
+                         <label class="block text-sm font-medium">Xác nhận mật khẩu mới *</label>
+                         <input type="password" id="confirm-password" class="mt-1 p-2 border rounded-lg w-full pr-10" required>
+                         <i id="toggle-confirm-pass" class="fas fa-eye toggle-password" style="top: 1.8rem;"></i>
+                     </div>
+                 </form>
+             </div>
+             <div class="p-6 bg-gray-50 border-t flex justify-end space-x-3">
+                  <button id="cancel-change-pass-btn" class="px-5 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300">Hủy bỏ</button>
+                  <button id="save-change-pass-btn" class="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Lưu lại</button>
+             </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg opacity-0 translate-x-full transition-all duration-300 z-50">
         <p id="toast-message"></p>
@@ -188,7 +236,7 @@
                     // Staff Accounts (Đăng nhập bằng ID)
                     { 
                         id: 'dhhvan', // Đoàn Hồng Hải Vân (Specialist)
-                        password: '123', 
+                        password: '1111', // Mật khẩu mặc định mới
                         name: 'Đoàn Hồng Hải Vân', 
                         unit: 'Phụ trách TC', 
                         role: 'specialist',
@@ -197,7 +245,7 @@
                     },
                     { 
                         id: 'ntdung', // Nguyễn Thùy Dung (Specialist)
-                        password: '123', 
+                        password: '1111', // Mật khẩu mặc định mới
                         name: 'Nguyễn Thùy Dung', 
                         unit: 'Phụ trách TS', 
                         role: 'specialist',
@@ -206,7 +254,7 @@
                     },
                     { 
                         id: 'vhthanh', // Võ Hoàng Thanh (Specialist)
-                        password: '123', 
+                        password: '1111', // Mật khẩu mặc định mới
                         name: 'Võ Hoàng Thanh', 
                         unit: 'Phụ trách SC/ĐTTX', 
                         role: 'specialist',
@@ -215,7 +263,7 @@
                     },
                     { 
                         id: 'tntdung', // Trần Nguyễn Trung Dũng (Manager)
-                        password: '123', 
+                        password: '1111', // Mật khẩu mặc định mới
                         name: 'Trần Nguyễn Trung Dũng', 
                         unit: 'Trưởng phòng', 
                         role: 'manager',
@@ -224,7 +272,7 @@
                     },
                     { 
                         id: 'thvan', // Trần Huyền Vân (VP / BGH)
-                        password: '123', 
+                        password: '1111', // Mật khẩu mặc định mới
                         name: 'Trần Huyền Vân', 
                         unit: 'Ban Giám Hiệu', 
                         role: 'vp',
@@ -268,6 +316,20 @@
         const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
         const formatDate = (date) => date ? new Date(date).toLocaleDateString('vi-VN') : '';
         const formatDateForInput = (date) => date ? new Date(date).toISOString().split('T')[0] : '';
+        
+        // *** HÀM TIỆN ÍCH MỚI: TOGGLE PASSWORD ***
+        const togglePasswordVisibility = (inputId, iconElement) => {
+            const input = $(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElement.classList.remove('fa-eye');
+                iconElement.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                iconElement.classList.remove('fa-eye-slash');
+                iconElement.classList.add('fa-eye');
+            }
+        };
 
 
         // --- TEMPLATES & RENDERING ---
@@ -293,7 +355,6 @@
                 case 'personal':
                     content.innerHTML = renderDocumentList(state.currentView);
                     break;
-                // *** Tách riêng 'outgoing' để xử lý luồng ***
                 case 'outgoing':
                     content.innerHTML = renderOutgoingDocuments();
                     // Thêm JS để xử lý chuyển tab
@@ -310,7 +371,6 @@
                         });
                     });
                     break;
-                // *******************************************
                 case 'search':
                     content.innerHTML = renderSearch();
                     break;
@@ -380,7 +440,6 @@
             }
         };
 
-        // *** HÀM MỚI: TẠO CÁC NÚT HÀNH ĐỘNG ĐỘNG ***
         function generateActionButtons(doc) {
             const userRole = state.currentUser.role;
             const canModify = state.currentUser.role === 'admin' || doc.createdBy === state.currentUser.id;
@@ -473,7 +532,6 @@
             `;
         };
         
-        // *** HÀM CẬP NHẬT: XỬ LÝ QUYỀN VĂN BẢN CÁ NHÂN ***
         const renderDocumentList = (category) => {
             let filteredDocs;
 
@@ -499,7 +557,6 @@
             `;
         };
 
-        // *** HÀM MỚI: RENDER GIAO DIỆN VĂN BẢN ĐI (CÓ TABS) ***
         const renderOutgoingDocuments = () => {
             const userRole = state.currentUser.role;
             let tabsHtml = '';
@@ -581,7 +638,6 @@
                 </div>
             `;
         };
-        // *******************************************************
 
         const renderSearch = () => {
             return `
@@ -624,9 +680,10 @@
                                      <label class="block text-sm font-medium">Tên đăng nhập (ID)</label>
                                      <input type="text" name="id" class="mt-1 p-2 border rounded-lg w-full" placeholder="VD: vanthh (Admin dùng email)" required>
                                  </div>
-                                 <div>
+                                 <div class="relative">
                                      <label class="block text-sm font-medium">Mật khẩu</label>
-                                     <input type="password" name="password" class="mt-1 p-2 border rounded-lg w-full" required>
+                                     <input type="password" name="password" class="mt-1 p-2 border rounded-lg w-full pr-10" required>
+                                     <i class="fas fa-eye toggle-admin-pass toggle-password" style="top: 1.8rem;"></i>
                                  </div>
                                  <div>
                                      <label class="block text-sm font-medium">Đơn vị</label>
@@ -661,8 +718,7 @@
                     <h3 class="text-lg font-semibold mb-4 border-b pb-2">Danh mục Loại văn bản</h3>
                     <div id="doc-types-list" class="space-y-2 mb-4 max-h-48 overflow-y-auto"></div>
                     <form id="add-doc-type-form" class="flex gap-2">
-                        <input type="text" name="id" placeholder="Mã loại (VD: QD)" class="p-2 border rounded-lg w-1C:\Users\trungdung\AppData\Local\Temp\webrender_canvas_document.html
-/3" required>
+                        <input type="text" name="id" placeholder="Mã loại (VD: QD)" class="p-2 border rounded-lg w-1/3" required>
                         <input type="text" name="name" placeholder="Tên loại (VD: Quyết định)" class="p-2 border rounded-lg flex-1" required>
                         <button type="submit" class="bg-blue-600 text-white px-3 rounded-lg hover:bg-blue-700"><i class="fas fa-plus"></i></button>
                     </form>
@@ -699,7 +755,6 @@
             </div>
         `;
 
-        // *** HÀM CẬP NHẬT: THÊM NÚT RESET MẬT KHẨU ***
         const renderUserList = () => {
             const container = $('#user-list-container');
             if (!container) return;
@@ -940,6 +995,18 @@
             }, 300);
         };
 
+        // *** HÀM MỚI: ĐÓNG MODAL ĐỔI MẬT KHẨU ***
+        const closeChangePassModal = () => {
+            const modal = $('#change-pass-modal');
+            $('.modal-content', modal).classList.add('scale-95');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('opacity-0');
+                $('#change-pass-form').reset();
+            }, 300);
+        };
+
         const handleSearch = () => {
             const keyword = $('#search-keyword').value.toLowerCase();
             const startDate = $('#search-start-date').value;
@@ -986,7 +1053,6 @@
             }
         };
 
-        // *** HÀM MỚI: XỬ LÝ QUÊN EMAIL/MẬT KHẨU (BẰNG CÁCH ADMIN RESET) ***
         const handleResetPassword = (userId) => {
             const userToReset = state.users.find(u => u.id === userId);
             if (!userToReset) return;
@@ -1006,7 +1072,6 @@
                 showToast('Hủy bỏ thao tác.', true);
             }
         };
-        // ***************************************************************
         
         const addCategory = (type, formId) => {
             const form = $(formId);
@@ -1106,12 +1171,11 @@
             $$('.edit-btn').forEach(btn => btn.onclick = () => openEditModal(btn.dataset.id));
             $$('.delete-btn').forEach(btn => btn.onclick = () => deleteDocument(btn.dataset.id));
             
-            // *** THÊM LISTENER CHO CÁC NÚT LUỒNG PHÊ DUYỆT ***
+            // Luồng phê duyệt
             $$('.submit-btn').forEach(btn => btn.onclick = () => handleSubmitToManager(btn.dataset.id));
             $$('.manager-approve-btn').forEach(btn => btn.onclick = () => handleManagerApprove(btn.dataset.id));
             $$('.vp-approve-btn').forEach(btn => btn.onclick = () => handleVPApprove(btn.dataset.id));
             $$('.reject-btn').forEach(btn => btn.onclick = () => handleReject(btn.dataset.id));
-            // *************************************************
 
             if (state.currentView === 'search') {
                 if ($('#search-btn')) $('#search-btn').addEventListener('click', handleSearch);
@@ -1120,6 +1184,22 @@
             if (state.currentView === 'settings' && state.currentUser.role === 'admin') {
                 renderUserList(); // Render user list (đã bao gồm listener)
                 if($('#add-user-form')) $('#add-user-form').addEventListener('submit', handleAddUser);
+                
+                // Listener cho toggle pass trong form admin
+                $$('.toggle-admin-pass').forEach(icon => {
+                    icon.addEventListener('click', (e) => {
+                        const input = e.target.previousElementSibling;
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            e.target.classList.remove('fa-eye');
+                            e.target.classList.add('fa-eye-slash');
+                        } else {
+                            input.type = 'password';
+                            e.target.classList.remove('fa-eye-slash');
+                            e.target.classList.add('fa-eye');
+                        }
+                    });
+                });
                 
                 renderCategoryList('#doc-types-list', state.docTypes, (id) => deleteCategory('docType', id));
                 renderCategoryList('#issuers-list', state.issuers, (id) => deleteCategory('issuer', id));
@@ -1253,30 +1333,25 @@
             }
         };
 
-        // *** HÀM MỚI: NGƯỜI DÙNG TỰ ĐỔI MẬT KHẨU ***
-        const handleChangePassword = () => {
-            const oldPassword = prompt('Để đổi mật khẩu, vui lòng nhập mật khẩu CŨ của bạn:');
-            
-            if (oldPassword === null) {
-                showToast('Đã hủy thao tác.', true);
-                return;
-            }
-            
+        // *** HÀM MỚI: LOGIC THỰC THI ĐỔI MẬT KHẨU ***
+        const executePasswordChange = () => {
+            const oldPassword = $('#old-password').value;
+            const newPassword = $('#new-password').value;
+            const confirmPassword = $('#confirm-password').value;
+
             // 1. Verify old password
             if (oldPassword !== state.currentUser.password) {
                 showToast('Mật khẩu cũ không đúng!', true);
                 return;
             }
             
-            // 2. Get new password
-            const newPassword = prompt('Nhập mật khẩu MỚI:');
-            if (newPassword === null || newPassword.trim() === '') {
-                showToast('Đã hủy hoặc mật khẩu mới không hợp lệ.', true);
+            // 2. Check new password
+            if (newPassword.trim() === '') {
+                showToast('Mật khẩu mới không được để trống.', true);
                 return;
             }
             
             // 3. Confirm new password
-            const confirmPassword = prompt('XÁC NHẬN mật khẩu MỚI:');
             if (newPassword !== confirmPassword) {
                 showToast('Mật khẩu xác nhận không khớp!', true);
                 return;
@@ -1302,6 +1377,7 @@
                 DB.setSessionItem('currentUser', state.currentUser);
                 
                 showToast('Đổi mật khẩu thành công!');
+                closeChangePassModal();
 
             } catch (e) {
                 showToast(`Đã xảy ra lỗi: ${e.message}`, true);
@@ -1325,7 +1401,24 @@
                     const navLink = e.target.closest('.nav-link');
                     if (navLink) navigate(navLink.dataset.view);
                 });
-                $('#change-pass-btn').addEventListener('click', handleChangePassword);
+                
+                // Listener cho nút "Đổi mật khẩu" (mở modal)
+                $('#change-pass-btn').addEventListener('click', () => {
+                    $('#change-pass-modal').classList.remove('hidden');
+                    $('#change-pass-modal').classList.add('flex');
+                    setTimeout(() => {
+                        $('.modal-content', $('#change-pass-modal')).classList.remove('scale-95');
+                    }, 10)
+                });
+                
+                // Listeners cho modal đổi mật khẩu
+                $('#close-change-pass-btn').addEventListener('click', closeChangePassModal);
+                $('#cancel-change-pass-btn').addEventListener('click', closeChangePassModal);
+                $('#save-change-pass-btn').addEventListener('click', executePasswordChange);
+                $('#toggle-old-pass').addEventListener('click', (e) => togglePasswordVisibility('#old-password', e.target));
+                $('#toggle-new-pass').addEventListener('click', (e) => togglePasswordVisibility('#new-password', e.target));
+                $('#toggle-confirm-pass').addEventListener('click', (e) => togglePasswordVisibility('#confirm-password', e.target));
+
                 $('#logout-btn').addEventListener('click', handleLogout);
                 $('#add-new-btn').addEventListener('click', () => renderForm());
                 $('#close-modal-btn').addEventListener('click', closeModal);
@@ -1333,6 +1426,7 @@
                 $('#save-modal-btn').addEventListener('click', handleFormSubmit);
                 window.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && !$('#form-modal').classList.contains('hidden')) closeModal();
+                    if (e.key === 'Escape' && !$('#change-pass-modal').classList.contains('hidden')) closeChangePassModal();
                 });
 
                 updateUserProfileDisplay();
@@ -1341,6 +1435,8 @@
                  $('#login-screen').style.display = 'flex';
                  $('#app').style.display = 'none';
                  $('#login-form').addEventListener('submit', handleLogin);
+                 // Listener cho toggle pass ở màn hình login
+                 $('#toggle-login-pass').addEventListener('click', (e) => togglePasswordVisibility('#password', e.target));
             }
         };
 
